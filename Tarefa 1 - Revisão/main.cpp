@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
+#include <ctime>
+
 using namespace std;
 
 struct Aluno{
@@ -25,6 +27,7 @@ struct Alunos{
 
 
 Alunos a;
+clock_t inicio, fim;
 
 void inicializar(){
     a.inicio = NULL;
@@ -39,6 +42,7 @@ void adicionarAluno(Aluno *novo){
     if (a.inicio == NULL) { // Verifica se existe algum aluno
         a.inicio = novo;
         a.fim = novo;
+        a.tamanho++;
         return;
     }
 
@@ -83,27 +87,28 @@ void criarAluno(){
 
     if((novo = new Aluno) != NULL){
 
+        cin.ignore();
+
         printf("Digite a matricula do aluno 'Ex.:A0000000': ");
         cin.getline(novo->matricula, 9);
-        while(temp != NULL){
-            if(strcmp(temp->matricula, novo->matricula) == 0){
-                printf("Ja existe aluno com esta matricula.");
-                delete(novo);
-                return;
-            }
-            temp = temp->prox;
-        }
-
-        temp = a.inicio;
 
         printf("Digite o CPF do aluno 'Ex.:111.222.333-44': ");
         cin.getline(novo->cpf, 15);
+
         while(temp != NULL){
+
             if(strcmp(temp->cpf, novo->cpf) == 0){
                 printf("Ja existe aluno com este CPF.");
                 delete(novo);
                 return;
             }
+
+            if(strcmp(temp->matricula, novo->matricula) == 0){
+                printf("Ja existe aluno com esta matricula.");
+                delete(novo);
+                return;
+            }
+            
             temp = temp->prox;
         }
 
@@ -161,8 +166,9 @@ void lerArquivo(const char *nome_arquivo){
                 novo->ante = NULL;
 
                 adicionarAluno(novo);
+                printf("%d\n", a.tamanho);
 
-                cout << "Aluno adicionado " << novo->matricula << " - " << novo->nome << "\n"; 
+                // cout << "Aluno adicionado " << novo->matricula << " - " << novo->nome << "\n"; 
                 fgetc(arquivo); // Pula 1 caractere no arquivo, neste caso vai pular o \n do final da linha e o ponteiro vai estar pronto para ler a proxima no outro fscanf
         }
 
@@ -181,7 +187,6 @@ void exibirAlunos(){
 
     printf("\t==ALUNOS==\n");
     Aluno *atual = a.inicio;;
-    int contador = 0;
 
     while (atual != NULL) {
 
@@ -194,10 +199,9 @@ void exibirAlunos(){
         printf("Cidade - %s\n\n", atual->cidade);
 
         atual = atual->prox;
-        contador ++;
     }
 
-    printf("Total de alunos %d\n\n", contador);
+    printf("Total de alunos %d\n\n", a.tamanho);
 }
 
 void removerAluno(Aluno *alunoRemover){
@@ -252,6 +256,9 @@ void buscarAlunos(){
         printf("Opcao inválida.");
         return;
     }
+
+    
+    inicio = time(NULL);
      
     while(atual != NULL){
 
@@ -274,8 +281,15 @@ void buscarAlunos(){
             printf("Idade - %d\n", atual->idade);
             printf("Curso - %s\n", atual->curso);
             printf("Cidade - %s\n\n\n", atual->cidade);
+
+            fim = time(NULL);
+            double tempo = difftime(fim, inicio);
+            printf("\nTempo gasto para busca do aluno %.02f\n", tempo);
+
             printf("Deseja remover este aluno? (S/N)\n");
             cin >> op;
+            
+
             
 
             if (tolower(op) == 's'){
@@ -292,13 +306,31 @@ void buscarAlunos(){
 
 }
 
+void limparLista(){ //Limpar os espaços de memória após o usuario finalizar o programa.
+
+    Aluno *atual = a.inicio;
+
+    while (atual != NULL){
+
+        Aluno *proximo = atual->prox;
+        delete atual;
+        atual = proximo;
+    }
+}
+
 
 int main(){
 
     inicializar(); // Inicializar a lista do zero
+    inicio = time(NULL);
+
     printf("\t==SISTEMA LEITURA DE ALUNOS==\n");
-    lerArquivo("alunos_completosV2-20.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
-    
+    lerArquivo("alunos_completosV2-1000000.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
+    fim = time(NULL);
+
+    double tempo = difftime(fim, inicio);
+    printf("\nTempo gasto para leitura de arquivos %.02f\n", tempo);
+
     char op = ' ';
 
     while(op != '4'){
@@ -313,14 +345,15 @@ int main(){
         break;
     
     case '2':
-        buscarAlunos(); // Exibe todos os alunos 
+        buscarAlunos(); // Busca dos alunos na lista encadeada 
         break;
     
     case '3':
-        criarAluno(); // Exibe todos os alunos 
+        criarAluno(); // Cria novo aluno a partir dos dados que usuario digitar 
         break;
     case '4':
-        printf("Programa finalizado."); // Exibe todos os alunos 
+        printf("Programa finalizado."); // Finaliza programa 
+        limparLista();
         break;
 
     default:

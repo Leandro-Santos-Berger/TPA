@@ -1,0 +1,7 @@
+Algoritmo Lista duplamente encadeada com inserção ordenada por nomes
+
+tempo de leitura de dados 150mil = 2:55 minutos
+tempo de leitura de dados 1Milhão =  ???
+
+tempo de pesquisa de dados 150mil = 0.00s
+tempo de pesquisa de dados 1Milhão = ???
