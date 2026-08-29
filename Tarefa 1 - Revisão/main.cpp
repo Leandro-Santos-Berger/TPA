@@ -3,10 +3,6 @@
 #include <iostream>
 #include <cstring>
 using namespace std;
-//PARA COMPILAR UTILIZE CTRL+SHIFT+B
-
-// Objetivo: Inserir 4 alunos na lista duplamente encadeada e fazer uma função listar onde ele lista do primeiro para o ultimo e do ultimo para o primeiro
-
 
 struct Aluno{
     char matricula[9];
