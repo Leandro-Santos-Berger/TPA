@@ -297,7 +297,7 @@ int main(){
 
     inicializar(); // Inicializar a lista do zero
     printf("\t==SISTEMA LEITURA DE ALUNOS==\n");
-    lerArquivo("C:/Users/Leandro/Desktop/TPA/exemplo0807/alunos_completosV2.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
+    lerArquivo("alunos_completosV2-20.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
     
     char op = ' ';
 
