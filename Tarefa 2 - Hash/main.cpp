@@ -2,12 +2,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
+#include <ctime>
 
 using namespace std;
-//PARA COMPILAR UTILIZE CTRL+SHIFT+B
-
-// Objetivo: Inserir 4 alunos na lista duplamente encadeada e fazer uma função listar onde ele lista do primeiro para o ultimo e do ultimo para o primeiro
-
+#define MAX 100
 
 struct Aluno{
     char matricula[9];
@@ -30,7 +28,8 @@ struct Alunos{
 
 
 Alunos a;
-Alunos hashCPF[100];
+Alunos AlunosCPF[MAX];
+clock_t inicio, fim;
 
 void inicializar(){
 
@@ -38,42 +37,49 @@ void inicializar(){
     // a.inicio = NULL;
     // a.tamanho = 0;
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < MAX; i++)
     {
-        hashCPF[i].inicio = NULL;
-        hashCPF[i].fim = NULL;
-        hashCPF[i].tamanho = 0;
+        AlunosCPF[i].inicio = NULL;
+        AlunosCPF[i].fim = NULL;
+        AlunosCPF[i].tamanho = 0;
     }
     
 }
-    
+
 
 void adicionarAluno(Aluno *novo){ 
 
-    char texto[3];
+    char digitoVerificador[3];
 
-    strncpy(texto, novo->cpf + 12, 2);
-    texto[2] = '\0';
+    digitoVerificador[0] = novo->cpf[12];
+    digitoVerificador[1] = novo->cpf[13];
+    digitoVerificador[2] = '\0';
 
+    int indice = atoi(digitoVerificador); //Pega algarismo e diminui por '0' e tranforma em inteiro e depois multiplica por 10 e soma com o proximo algarismo e assim por diante, no final ele vai ter o numero inteiro do CPF
 
-    if (a.inicio == NULL) { // Verifica se existe algum aluno
-        a.inicio = novo;
-        a.fim = novo;
+    printf("Indice do aluno %s - %s: %d\n", novo->cpf, novo->nome, indice);
+
+    if (AlunosCPF[indice].inicio == NULL){ // Verifica se existe algum aluno
+        AlunosCPF[indice].inicio = novo;
+        AlunosCPF[indice].fim = novo;
+        AlunosCPF[indice].tamanho++;
+        printf("%d\n", AlunosCPF[indice].tamanho);
         return;
     }
 
-    Aluno *temp = a.inicio;
+    Aluno *temp = AlunosCPF[indice].inicio;
 
     while(temp != NULL){
 
 
         if(strcmp(temp->nome, novo->nome) > 0){
 
-            if (a.inicio == temp){
+            if (AlunosCPF[indice].inicio == temp){
                 novo->prox = temp;
                 temp->ante = novo;
                 a.inicio = novo;
                 a.tamanho++;
+                printf("%d\n", AlunosCPF[indice].tamanho);
                 return;
                 }   
 
@@ -81,7 +87,8 @@ void adicionarAluno(Aluno *novo){
             novo->ante = temp->ante;
             novo->ante->prox = novo;
             temp->ante = novo;
-            a.tamanho++;
+            AlunosCPF[indice].tamanho++;
+            printf("%d\n", AlunosCPF[indice].tamanho);
             return;
             }
 
@@ -90,9 +97,11 @@ void adicionarAluno(Aluno *novo){
 
     novo->ante = a.fim;
     novo->prox = NULL;
-    a.fim->prox = novo;
-    a.fim = novo;
-    a.tamanho++;
+    AlunosCPF[indice].fim->prox = novo;
+    AlunosCPF[indice].fim = novo;
+    AlunosCPF[indice].tamanho++;
+
+    printf("%d\n", AlunosCPF[indice].tamanho);
 
 }
    
@@ -103,28 +112,28 @@ void criarAluno(){
 
     if((novo = new Aluno) != NULL){
 
+        cin.ignore();
 
         printf("Digite a matricula do aluno 'Ex.:A0000000': ");
         cin.getline(novo->matricula, 9);
-        while(temp != NULL){
-            if(strcmp(temp->matricula, novo->matricula) == 0){
-                printf("Ja existe aluno com esta matricula.");
-                delete(novo);
-                return;
-            }
-            temp = temp->prox;
-        }
-
-        temp = a.inicio;
 
         printf("Digite o CPF do aluno 'Ex.:111.222.333-44': ");
         cin.getline(novo->cpf, 15);
+
         while(temp != NULL){
+
             if(strcmp(temp->cpf, novo->cpf) == 0){
                 printf("Ja existe aluno com este CPF.");
                 delete(novo);
                 return;
             }
+
+            if(strcmp(temp->matricula, novo->matricula) == 0){
+                printf("Ja existe aluno com esta matricula.");
+                delete(novo);
+                return;
+            }
+            
             temp = temp->prox;
         }
 
@@ -152,6 +161,7 @@ void criarAluno(){
 
     adicionarAluno(novo);
 
+
 }
 
 void lerArquivo(const char *nome_arquivo){
@@ -171,6 +181,7 @@ void lerArquivo(const char *nome_arquivo){
     }
 
     Aluno *novo;
+    int contador = 0;
 
     while ((novo = new Aluno) != NULL) {
 
@@ -182,8 +193,10 @@ void lerArquivo(const char *nome_arquivo){
                 novo->ante = NULL;
 
                 adicionarAluno(novo);
+                contador++;
+                
 
-                cout << "Aluno adicionado " << novo->matricula << " - " << novo->nome << "\n"; 
+                // cout << "Aluno adicionado " << novo->matricula << " - " << novo->nome << "\n"; 
                 fgetc(arquivo); // Pula 1 caractere no arquivo, neste caso vai pular o \n do final da linha e o ponteiro vai estar pronto para ler a proxima no outro fscanf
         }
 
@@ -194,31 +207,36 @@ void lerArquivo(const char *nome_arquivo){
     }
 
     fclose(arquivo);
-    printf("Leitura concluida. Total de alunos %d\n", a.tamanho);
-
+    printf("\nTotal de alunos adicionados %d", contador);
 }
 
-void exibirAlunos(){
+void exibirAlunos(){ // A partir de agora ele vai exibir em ordem alfabetica mas de cada lista da hash
 
     printf("\t==ALUNOS==\n");
-    Aluno *atual = a.inicio;;
-    int contador = 0;
 
-    while (atual != NULL) {
+    Aluno *atual = AlunosCPF[0].inicio;
 
-        printf("Matricula - %s\n", atual->matricula);
-        printf("Nome - %s\n", atual->nome);
-        printf("CPF - %s\n", atual->cpf);
-        printf("Nota - %lf\n", atual->nota);
-        printf("Idade - %d\n", atual->idade);
-        printf("Curso - %s\n", atual->curso);
-        printf("Cidade - %s\n\n", atual->cidade);
+    for (int i = 0; i < MAX; i++) {
 
-        atual = atual->prox;
-        contador ++;
+    
+
+        while (atual != NULL) {
+
+            printf("Matricula - %s\n", atual->matricula);
+            printf("Nome - %s\n", atual->nome);
+            printf("CPF - %s\n", atual->cpf);
+            printf("Nota - %lf\n", atual->nota);
+            printf("Idade - %d\n", atual->idade);
+            printf("Curso - %s\n", atual->curso);
+            printf("Cidade - %s\n\n", atual->cidade);
+
+            atual = atual->prox;
+        }
+
+    printf("Total de alunos %d\n\n", a.tamanho);
     }
-
-    printf("Total de alunos %d\n\n", contador);
+    
+    
 }
 
 void removerAluno(Aluno *alunoRemover){
@@ -273,6 +291,9 @@ void buscarAlunos(){
         printf("Opcao inválida.");
         return;
     }
+
+    
+    inicio = time(NULL);
      
     while(atual != NULL){
 
@@ -295,8 +316,15 @@ void buscarAlunos(){
             printf("Idade - %d\n", atual->idade);
             printf("Curso - %s\n", atual->curso);
             printf("Cidade - %s\n\n\n", atual->cidade);
+
+            fim = time(NULL);
+            double tempo = difftime(fim, inicio);
+            printf("\nTempo gasto para busca do aluno %.02f\n", tempo);
+
             printf("Deseja remover este aluno? (S/N)\n");
             cin >> op;
+            
+
             
 
             if (tolower(op) == 's'){
@@ -313,13 +341,31 @@ void buscarAlunos(){
 
 }
 
+void limparLista(){ //Limpar os espaços de memória após o usuario finalizar o programa.
+
+    Aluno *atual = a.inicio;
+
+    while (atual != NULL){
+
+        Aluno *proximo = atual->prox;
+        delete atual;
+        atual = proximo;
+    }
+}
+
 
 int main(){
 
     inicializar(); // Inicializar a lista do zero
+    inicio = time(NULL);
+
     printf("\t==SISTEMA LEITURA DE ALUNOS==\n");
-    lerArquivo("D:/Users/2025122760138/Downloads/Materias/TPA/Atividade 2 - Hash/alunos_incompletosV2.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
-    
+    lerArquivo("alunos_incompletosV2.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
+    fim = time(NULL);
+
+    double tempo = difftime(fim, inicio);
+    printf("\nTempo gasto para leitura de arquivos %.02f\n", tempo);
+
     char op = ' ';
 
     while(op != '4'){
@@ -334,14 +380,15 @@ int main(){
         break;
     
     case '2':
-        buscarAlunos(); // Exibe todos os alunos 
+        buscarAlunos(); // Busca dos alunos na lista encadeada 
         break;
     
     case '3':
-        criarAluno(); // Exibe todos os alunos 
+        criarAluno(); // Cria novo aluno a partir dos dados que usuario digitar 
         break;
     case '4':
-        printf("Programa finalizado."); // Exibe todos os alunos 
+        printf("Programa finalizado."); // Finaliza programa 
+        limparLista();
         break;
 
     default:

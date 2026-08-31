@@ -325,7 +325,7 @@ int main(){
     inicio = time(NULL);
 
     printf("\t==SISTEMA LEITURA DE ALUNOS==\n");
-    lerArquivo("alunos_completosV2-1000000.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
+    lerArquivo("alunos_completosV2-20.csv"); // ler o arquivo csv e adiciona a lista duplamente encadeada
     fim = time(NULL);
 
     double tempo = difftime(fim, inicio);
