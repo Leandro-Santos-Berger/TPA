@@ -105,64 +105,64 @@ void adicionarAluno(Aluno *novo){
 
 }
    
-void criarAluno(){
+// void criarAluno(){
 
-    Aluno *temp = a.inicio;
-    Aluno *novo;
+//     Aluno *temp = a.inicio;
+//     Aluno *novo;
 
-    if((novo = new Aluno) != NULL){
+//     if((novo = new Aluno) != NULL){
 
-        cin.ignore();
+//         cin.ignore();
 
-        printf("Digite a matricula do aluno 'Ex.:A0000000': ");
-        cin.getline(novo->matricula, 9);
+//         printf("Digite a matricula do aluno 'Ex.:A0000000': ");
+//         cin.getline(novo->matricula, 9);
 
-        printf("Digite o CPF do aluno 'Ex.:111.222.333-44': ");
-        cin.getline(novo->cpf, 15);
+//         printf("Digite o CPF do aluno 'Ex.:111.222.333-44': ");
+//         cin.getline(novo->cpf, 15);
 
-        while(temp != NULL){
+//         while(temp != NULL){
 
-            if(strcmp(temp->cpf, novo->cpf) == 0){
-                printf("Ja existe aluno com este CPF.");
-                delete(novo);
-                return;
-            }
+//             if(strcmp(temp->cpf, novo->cpf) == 0){
+//                 printf("Ja existe aluno com este CPF.");
+//                 delete(novo);
+//                 return;
+//             }
 
-            if(strcmp(temp->matricula, novo->matricula) == 0){
-                printf("Ja existe aluno com esta matricula.");
-                delete(novo);
-                return;
-            }
+//             if(strcmp(temp->matricula, novo->matricula) == 0){
+//                 printf("Ja existe aluno com esta matricula.");
+//                 delete(novo);
+//                 return;
+//             }
             
-            temp = temp->prox;
-        }
+//             temp = temp->prox;
+//         }
 
-        printf("Digite o nome do aluno 'Joao Carlos': ");
-        cin.getline(novo->nome, 40);
+//         printf("Digite o nome do aluno 'Joao Carlos': ");
+//         cin.getline(novo->nome, 40);
 
-        printf("Digite a nota do aluno 'Ex.:55.7': ");
-        cin >> novo->nota;
+//         printf("Digite a nota do aluno 'Ex.:55.7': ");
+//         cin >> novo->nota;
 
-        printf("Digite a idade do aluno 'Ex.:25': ");
-        cin >> novo->idade;
+//         printf("Digite a idade do aluno 'Ex.:25': ");
+//         cin >> novo->idade;
 
-        cin.ignore(10000, '\n');
+//         cin.ignore(10000, '\n');
 
-        printf("Digite o curso do aluno 'Ex.:Sistema de informacao': ");
-        cin.getline(novo->curso, 40); 
+//         printf("Digite o curso do aluno 'Ex.:Sistema de informacao': ");
+//         cin.getline(novo->curso, 40); 
 
-        printf("Digite a cidade do aluno 'Ex.:Colatina': ");
-        cin.getline(novo->cidade, 40);  
+//         printf("Digite a cidade do aluno 'Ex.:Colatina': ");
+//         cin.getline(novo->cidade, 40);  
         
-    }
+//     }
 
-    novo->ante = NULL;
-    novo->prox = NULL;
+//     novo->ante = NULL;
+//     novo->prox = NULL;
 
-    adicionarAluno(novo);
+//     adicionarAluno(novo);
 
 
-}
+// }
 
 void lerArquivo(const char *nome_arquivo){
 
